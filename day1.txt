@@ -1,0 +1,105 @@
+Setting Up Medusa Store with Medusa CLI:
+
+This guide will walk you through installing the Medusa CLI and setting up a new Medusa e-commerce project step-by-step.
+
+Prerequisites
+Node.js: Ensure Node.js is installed. If not, download and install it from Node.js.
+Yarn: Medusa uses Yarn as its package manager.
+PostgreSQL: Required for the database setup.
+
+-------------------------------------------------------------------------------------------------------------------
+
+Step 1: Verify Node.js Installation
+To check if Node.js is installed on your system, run:
+
+#node -v
+
+If Node.js is not installed, download and install it from Node.js.
+
+-------------------------------------------------------------------------------------------------------------------
+
+Step 2: Install Yarn
+Medusa relies on Yarn to manage packages. If Yarn is not installed, you can install it as follows:
+
+#brew install yarn
+
+For other systems, follow the official installation guide at Yarn Installation.
+
+To verify Yarn installation, run:
+
+#yarn -v
+
+-------------------------------------------------------------------------------------------------------------------
+
+Step 3: Install Medusa CLI Globally
+Once you have Node.js and Yarn installed, you can install the Medusa CLI globally. Run the following command:
+
+#yarn global add @medusajs/medusa-cli
+This will make the Medusa CLI accessible from any directory on your system.
+
+-------------------------------------------------------------------------------------------------------------------
+
+Step 4: Verify Medusa CLI Installation
+To ensure the Medusa CLI is installed correctly, check the version:
+
+#medusa --version
+
+-------------------------------------------------------------------------------------------------------------------
+
+Step 5: Create a New Medusa Store
+With the Medusa CLI installed, you can now create a new Medusa store by running:
+
+#medusa new my-medusa-store
+If you encounter an error saying the directory already exists, delete it with:
+
+#sudo rm -r my-medusa-store
+Then rerun the medusa new command to set up the store from scratch.
+
+-------------------------------------------------------------------------------------------------------------------
+
+Step 6: Install Project Dependencies
+Medusa will install the necessary dependencies automatically during the setup. However, if you encounter warnings or errors related to deprecated packages, consider running:
+
+#npm audit fix
+To fix all issues, use the following:
+
+#npm audit fix --force
+
+-------------------------------------------------------------------------------------------------------------------
+
+Step 7: Set Up PostgreSQL Database
+Medusa requires a PostgreSQL database. During the setup process, you will be prompted to provide database credentials. You can use the default credentials provided, or input your own.
+
+Example:
+Host: localhost
+Port: 5432
+Database: medusa_db
+Username: postgres
+Password: your_password
+Ensure your PostgreSQL server is running. If not, start it using:
+
+#sudo service postgresql start
+
+-------------------------------------------------------------------------------------------------------------------
+
+Step 8: Start the Medusa Project
+Now that the project and database are set up, navigate to your Medusa store's project directory:
+
+#cd my-medusa-store
+Then, start the development server using:
+
+#medusa develop
+The server will start on localhost:9000 by default. You can access your store and continue building your e-commerce platform from here.
+
+Troubleshooting
+Port Issues: If localhost:9000 is already in use, you can specify a different port by using the --port option:
+bash
+Copy code
+medusa develop --port 8000
+Database Connection: Ensure that the PostgreSQL server is running and accessible. Verify your credentials in the medusa-config.js file located in the root directory of your project.
+
+-------------------------------------------------------------------------------------------------------------------
+
+Conclusion
+You've successfully installed and set up a Medusa store locally. You can now proceed to customize and develop your e-commerce store using Medusa.js!
+
