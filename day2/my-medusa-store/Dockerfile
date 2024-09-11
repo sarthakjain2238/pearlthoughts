@@ -1,49 +1,21 @@
-# Use an official Node.js runtime as a parent image 
+# Use the official Node.js image as a base
+FROM node:18
 
-FROM node:16-alpine 
+# Set the working directory
+WORKDIR /app
 
- 
+# Install dependencies
+COPY package*.json ./
+RUN npm install
 
-# Set the working directory in the container 
+# Copy the rest of the application code
+COPY . .
 
-WORKDIR /usr/src/app 
+# Build the Medusa application
+RUN npm run build
 
-# Copy package.json and package-lock.json (if available) 
-
-COPY package*.json ./ 
-
- 
-
-# Install dependencies 
-
-RUN npm install 
-
- 
-
-# Copy the rest of the application code 
-
-COPY . . 
-
- 
-
-# Expose the port Medusa runs on 
-
+# Expose the port the app runs on
 EXPOSE 7001
 
- 
-
-# Set environment variables if needed 
-
-ENV NODE_ENV=production 
-
- 
-
-# Build the project (optional if there’s any build step) 
-
-RUN npm run build 
-
- 
-
-# Start the Medusa server 
-
-CMD ["npm", "run", "start"] 
+# Start the Medusa application
+CMD ["npm", "start"]

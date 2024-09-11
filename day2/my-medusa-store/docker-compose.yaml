@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  medusa:
+    build: .
+    ports:
+      - "7001:7001"
+    environment:
+      DATABASE_TYPE: postgres
+      DATABASE_URL: postgres://postgres:sarthak@db:5432/medusa_db
+      MEDUSA_PROJECT_DIR: /app
+    depends_on:
+      - db
+    volumes:
+      - .:/app
+
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: sarthak
+      POSTGRES_DB: medusa_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
