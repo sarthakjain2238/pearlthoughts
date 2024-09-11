@@ -1,0 +1,132 @@
+Dockerizing the Medusa Backend – Day 2 Report
+
+Task Overview:
+The objective for Day 2 was to containerize the Medusa backend using Docker. This process involves setting up a Docker environment for the Medusa project, building a Docker image, and running the backend in a container. Below is a detailed, step-by-step guide to completing this task.
+
+Step-by-Step Guide:
+
+Step 1: Install Docker
+Before proceeding, ensure that Docker is installed on your system. You can download and install Docker from here. Verify the installation by running the following command:
+
+# docker --version
+This will display the installed Docker version.
+----------------------------------------------------------------------------------
+Step 2: Set Up the Medusa Backend Project
+Install Node.js: Ensure Node.js (version 14.x or above) is installed. You can check the installed version using:
+
+#node --version
+Create a Medusa Backend Project: If you haven’t set up the Medusa backend project yet, use the following command to create one:
+
+#npx create-medusa-app@latest
+Navigate to the Project Directory: After the project is created, navigate to the project folder:
+
+#cd your-medusa-app
+----------------------------------------------------------------------------------
+Step 3: Create a Dockerfile
+A Dockerfile is needed to define how Docker will build and run the Medusa backend service. Create a file named Dockerfile in the root directory of your Medusa project with the following content:
+
+dockerfile
+
+# Use an official Node.js runtime as a parent image
+FROM node:16-alpine
+
+# Set the working directory inside the container
+WORKDIR /usr/src/app
+
+# Copy package.json and package-lock.json
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy the rest of the application code
+COPY . .
+
+# Expose the port Medusa runs on
+EXPOSE 7001
+
+# Set environment variables if needed
+ENV NODE_ENV=production
+
+# Build the project (if needed)
+RUN npm run build
+
+# Start the Medusa server
+CMD ["npm", "run", "start"]
+This Dockerfile defines the necessary steps for setting up the environment, installing dependencies, and starting the Medusa backend service.
+----------------------------------------------------------------------------------
+Step 4: Create a .dockerignore File
+To prevent unnecessary files from being added to the Docker image, create a .dockerignore file in the root directory of your project with the following content:
+
+plaintext
+Copy code
+node_modules
+npm-debug.log
+Dockerfile
+docker-compose.yml
+.env
+
+This file ensures that certain directories and files (e.g., node_modules and logs) are not included in the Docker image, which helps in reducing the image size.
+----------------------------------------------------------------------------------
+Step 5: Build the Docker Image
+
+With the Dockerfile and .dockerignore set up, you can now build the Docker image. Navigate to the root directory of your project and run the following command:
+
+#docker build -t medusa-backend .
+This command builds the Docker image and tags it as medusa-backend.
+
+----------------------------------------------------------------------------------
+Step 6: Run the Docker Container
+Once the Docker image is built, you can run the container using the following command:
+
+#docker run -d -p 7001:7001 medusa-backend
+This command starts the Medusa backend in a Docker container, mapping port 9000 from the container to port 9000 on your local machine.
+x-----------------------------------------------------------------------------------------------------x
+OR
+Build and Run Containers
+Build Containers: Run the following command to build your Docker image and start the containers defined in the docker-compose.yml file.
+
+#docker-compose up --build
+
+docker-compose.yaml file:-
+version: '3.8'
+
+services:
+  medusa:
+    build: .
+    ports:
+      - "7001:7001"
+    environment:
+      DATABASE_TYPE: postgres
+      DATABASE_URL: postgres://postgres:sarthak@db:5432/medusa_db
+      MEDUSA_PROJECT_DIR: /app
+    depends_on:
+      - db
+    volumes:
+      - .:/app
+
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: sarthak
+      POSTGRES_DB: medusa_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
+x-----------------------------------------------------------------------------------------------------x
+
+----------------------------------------------------------------------------------
+Step 7: Verify the Service
+After the container is running, you can verify that the Medusa backend is working by opening a browser and navigating to:
+
+http://localhost:9000
+Alternatively, you can use an API tool like Postman to test the API endpoints.
+----------------------------------------------------------------------------------
+
+Conclusion:
+By following the steps outlined above, the Medusa backend is successfully containerized using Docker. The project can now run within a Docker container, making it easier to deploy, maintain, and scale. This process also optimizes the development workflow by isolating the project in a containerized environment.
