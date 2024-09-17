@@ -1,1 +1,39 @@
+sudo apt update && sudo apt upgrade -y
+
+-----------------------------------------------
+
+curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+sudo apt install -y nodejs
+
+-----------------------------------------------
+
+sudo apt install postgresql postgresql-contrib
+sudo systemctl start postgresql
+
+-----------------------------------------------
+
+sudo -u postgres psql
+CREATE USER medusa WITH PASSWORD 'medusa';
+CREATE DATABASE medusa;
+GRANT ALL PRIVILEGES ON DATABASE medusa TO medusa;
+ALTER USER medusa CREATEDB;
+\q
+
+-----------------------------------------------
+
+sudo npm install -g @medusajs/medusa-cli
+
+-----------------------------------------------
+
+npx create-medusa-app@latest
+
+
+-----------------------------------------------
+
+Configure the .env file: In your project directory, open the .env file and configure the database connection:
+
+DATABASE_URL=postgres://medusa:medusa@localhost:5432/medusa
+
+-----------------------------------------------
+npm run start
 
