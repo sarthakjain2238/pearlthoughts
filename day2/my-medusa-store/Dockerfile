@@ -1,21 +1,22 @@
-# Use the official Node.js image as a base
-FROM node:18
+# Dockerfile for Medusa
 
-# Set the working directory
-WORKDIR /app
+# Use the official Node.js image as a base image
+FROM node:16
+
+# Set the working directory inside the container
+WORKDIR /usr/src/app
+
+# Copy package.json and package-lock.json
+COPY package*.json ./
 
 # Install dependencies
-COPY package*.json ./
 RUN npm install
 
 # Copy the rest of the application code
 COPY . .
 
-# Build the Medusa application
-RUN npm run build
+# Expose port 9000 inside the container
+EXPOSE 9000
 
-# Expose the port the app runs on
-EXPOSE 7001
-
-# Start the Medusa application
-CMD ["npm", "start"]
+# Command to run the Medusa server
+CMD ["npm", "run", "start"]

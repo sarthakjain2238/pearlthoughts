@@ -1,29 +1,44 @@
-version: '3.8'
-
+version: "3"
 services:
   medusa:
     build: .
-    ports:
-      - "7001:7001"
+    container_name: medusa
     environment:
-      DATABASE_TYPE: postgres
-      DATABASE_URL: postgres://postgres:sarthak@db:5432/medusa_db
-      MEDUSA_PROJECT_DIR: /app
+      DATABASE_URL: ${DATABASE_URL}
+      REDIS_URL: ${REDIS_URL}
+      JWT_SECRET: ${JWT_SECRET}
+      COOKIE_SECRET: ${COOKIE_SECRET}
+      ADMIN_CORS: ${ADMIN_CORS}
+      STORE_CORS: ${STORE_CORS}
+    ports:
+      - "7001:9000"  # Map port 9000 of the container to port 7001 of the host
     depends_on:
-      - db
+      - mysql
+      - redis
     volumes:
-      - .:/app
+      - ./medusa:/var/www/medusa
 
-  db:
-    image: postgres:13
+  mysql:
+    image: mysql:5.7
+    container_name: mysql
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: sarthak
-      POSTGRES_DB: medusa_db
+      MYSQL_ROOT_PASSWORD: root1234
+      MYSQL_DATABASE: medusa_db
+      MYSQL_USER: medusa_user
+      MYSQL_PASSWORD: root1234
     ports:
-      - "5432:5432"
+      - "3306:3306"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - mysql_data:/var/lib/mysql
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
 
 volumes:
-  postgres_data:
+  mysql_data:
+  redis_data:

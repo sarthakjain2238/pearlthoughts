@@ -28,10 +28,11 @@ const ADMIN_CORS =
 // CORS to avoid issues when consuming Medusa from a client
 const STORE_CORS = process.env.STORE_CORS || "http://localhost:8000";
 
+// MySQL Database URL
 const DATABASE_URL =
-  process.env.DATABASE_URL || "postgres://localhost/medusa-starter-default";
+  process.env.DATABASE_URL || "mysql://medusa_user:root1234@mysql:3306/medusa_db";
 
-const REDIS_URL = process.env.REDIS_URL || "redis://localhost:6379";
+const REDIS_URL = process.env.REDIS_URL || "redis://redis:6379";
 
 const plugins = [
   `medusa-fulfillment-manual`,
@@ -55,7 +56,9 @@ const plugins = [
 ];
 
 const modules = {
-  /*eventBus: {
+  /* Uncomment this if you are using Redis */
+  /*
+  eventBus: {
     resolve: "@medusajs/event-bus-redis",
     options: {
       redisUrl: REDIS_URL
@@ -66,7 +69,8 @@ const modules = {
     options: {
       redisUrl: REDIS_URL
     }
-  },*/
+  },
+  */
 };
 
 /** @type {import('@medusajs/medusa').ConfigModule["projectConfig"]} */
@@ -75,9 +79,9 @@ const projectConfig = {
   cookie_secret: process.env.COOKIE_SECRET || "supersecret",
   store_cors: STORE_CORS,
   database_url: DATABASE_URL,
+  database_type: "mysql",  // Set to MySQL
   admin_cors: ADMIN_CORS,
-  // Uncomment the following lines to enable REDIS
-  // redis_url: REDIS_URL
+  redis_url: REDIS_URL,
 };
 
 /** @type {import('@medusajs/medusa').ConfigModule} */

@@ -1,7 +1,7 @@
 Dockerizing the Medusa Backend – Day 2 Report
 
 Task Overview:
-The objective for Day 2 was to containerize the Medusa backend using Docker. This process involves setting up a Docker environment for the Medusa project, building a Docker image, and running the backend in a container. Below is a detailed, step-by-step guide to completing this task.
+The objective for Day 2 was c
 
 Step-by-Step Guide:
 
