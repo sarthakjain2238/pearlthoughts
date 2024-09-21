@@ -48,3 +48,9 @@ resource "aws_security_group" "medusa_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
+
+# Add this block to output the EC2 instance's public IP
+output "ec2_public_ip" {
+  value = aws_instance.medusa_instance.public_ip
+  description = "The public IP of the Medusa EC2 instance"
+}
