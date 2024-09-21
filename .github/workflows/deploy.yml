@@ -1,0 +1,51 @@
+name: Deploy to EC2 with Terraform
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_wrapper: false
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Plan
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          TF_VAR_ec2_private_key: ${{ secrets.EC2_SSH_KEY }}
+        run: terraform plan -out=tfplan
+
+      - name: Terraform Apply
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          TF_VAR_ec2_private_key: ${{ secrets.EC2_SSH_KEY }}
+        run: terraform apply -auto-approve tfplan
+
+      - name: Get EC2 Public IP
+        id: get_ip
+        run: echo "ec2_public_ip=$(terraform output -raw ec2_public_ip)" >> $GITHUB_OUTPUT
+
+      - name: Wait for EC2 to be Ready
+        run: sleep 60
+
+      - name: Add SSH Key
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
+
+      - name: Test SSH Connection
+        run: ssh -o StrictHostKeyChecking=no ubuntu@${{ steps.get_ip.outputs.ec2_public_ip }} 'echo "SSH Connection Successful"'
