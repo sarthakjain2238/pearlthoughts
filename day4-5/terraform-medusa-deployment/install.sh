@@ -5,6 +5,6 @@ sudo usermod -aG docker ubuntu
 sudo systemctl enable docker
 sudo systemctl start docker
 cd /home/ubuntu
-git clone https://github.com/sarthakjain2238/pearlthoughts
-cd EC2Deploy
+git clone https://github.com/sarthakjain2238/pearlthoughts.git
+cd pearlthoughts.git
 sudo docker-compose up -d --build
