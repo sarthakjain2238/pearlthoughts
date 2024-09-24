@@ -1,4 +1,0 @@
-Task-4: Create an EC2 instance manually and deploy Medusa application on it using GitHub Actions. 17-09-2024
-
-Task - 5 : - Automate EC2 Instance Creation and Medusa Deployment using Terraform & automate the deployment through GitHub actions - 18/09/2024
-Objective: - Automate the provisioning and management of AWS EC2 instances using Terraform for consistent, repeatable, and scalable infrastructure deployment. Implement Medusa as a headless commerce platform on the deployed EC2 instances to ensure efficient setup while maintaining high availability. Integrate the entire process with a robust version control system to facilitate effective collaboration and change management across various environments.

@@ -1,0 +1,2 @@
+Task-4: Create an EC2 instance manually and deploy Medusa application on it using GitHub Actions. 17-09-2024
+
