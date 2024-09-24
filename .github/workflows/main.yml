@@ -1,4 +1,4 @@
-name: Deploy Medusa to EC2 using Terraform
+name: Deploy Medusa
 
 on:
   push:
@@ -6,71 +6,22 @@ on:
       - main
 
 jobs:
-  terraform:
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
-
-    - name: Set up Terraform
-      uses: hashicorp/setup-terraform@v2
-      with:
-        terraform_version: 1.3.7
-
-    - name: Initialize Terraform
-      run: terraform init
-
-    - name: Apply Terraform
-      id: apply
-      run: terraform apply -auto-approve
-
-    - name: Output Terraform variables
-      run: |
-        echo "EC2_IP=$(terraform output -raw instance_ip)" >> $GITHUB_ENV
-        echo "PRIVATE_KEY=$(terraform output -raw private_key)" >> $GITHUB_ENV
-
   deploy:
-    needs: terraform
     runs-on: ubuntu-latest
-
     steps:
-    - name: Set up SSH for EC2
-      env:
-        EC2_SSH_KEY: ${{ env.PRIVATE_KEY }}
-      run: |
-        echo "$EC2_SSH_KEY" > /tmp/id_rsa
-        chmod 600 /tmp/id_rsa
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Deploy to EC2
-      env:
-        EC2_IP: ${{ env.EC2_IP }}
-        EC2_USER: ubuntu
-      run: |
-        ssh -o StrictHostKeyChecking=no -i /tmp/id_rsa ubuntu@${{ env.EC2_IP }} << 'EOF'
-          # Install required packages and dependencies (if needed)
-          sudo apt update && sudo apt upgrade -y
-          sudo apt install -y git nodejs npm postgresql redis-server
-          
-          # Set up PostgreSQL for Medusa-backend
-          sudo -u postgres psql -c "CREATE USER medusa WITH PASSWORD 'medusa';" || true
-          sudo -u postgres psql -c "CREATE DATABASE medusa;" || true
-          sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE medusa TO medusa;" || true
-          
-          # Install Medusa CLI
-          sudo npm install -g @medusajs/medusa-cli
-          
-          # Create and configure Medusa backend project
-          mkdir medusa-backend && cd medusa-backend
-          sudo medusa new . --skip-db
-          echo "DATABASE_URL=postgres://medusa:medusa@localhost:5432/medusa" | sudo tee .env
-          
-          # Run migrations
-          sudo medusa migrations run
-          
-          # Set up admin user
-          sudo medusa user --email admin@medusa.com --password admin123
-          
-          # Start the Medusa server
-          nohup sudo medusa start &> medusa.log &
-        EOF
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.0.0
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Plan
+        run: terraform plan
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
